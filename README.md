@@ -2,9 +2,9 @@
   
 # **Coding, Living, Thinking**
 
-[![Blog][(https://img.shields.io/badge/Blog-ylhx.site-8B5CF6?style=for-the-badge)](https://ylhx.site)](https://blog.ylhx.site/)
+[![Blog](https://img.shields.io/badge/Blog-ylhx.site-8B5CF6?style=for-the-badge)](https://blog.ylhx.site/)
 [![GitHub](https://img.shields.io/badge/GitHub-ylhx--lzm-181717?style=for-the-badge&logo=github)](https://github.com/ylhx-lzm)
-[![RSS](https://img.shields.io/badge/RSS-订阅博客-FFA500?style=for-the-badge&logo=rss)](/rss/)
+[![RSS](https://img.shields.io/badge/RSS-订阅博客-FFA500?style=for-the-badge&logo=rss)](https://blog.ylhx.site/rss/)
 
 ![Astro](https://img.shields.io/badge/Astro_6.3.3-BC52EE?logo=astro&logoColor=fff)
 ![TypeScript](https://img.shields.io/badge/TypeScript_5.9-3178C6?logo=typescript&logoColor=fff)
