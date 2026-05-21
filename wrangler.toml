@@ -4,4 +4,4 @@ compatibility_date="2026-05-21"
 [assets]
 directory="./dist"
 
-[NODE_VERSION]="22"
+[NODE_VERSION] = "22"
