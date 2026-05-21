@@ -2,7 +2,7 @@
 
 # ylhx / 雨泪痕心
 
-> **Code, Life, Thinking** — 专注于 AI Agent、LLM 与全栈开发的技术博客
+> **Code, Life, Thinking** — 记录秋招备战、大模型原理与 AI 工程实践
 
 [![Blog](https://img.shields.io/badge/Blog-ylhx.site-8B5CF6?style=for-the-badge)](https://ylhx.site)
 [![GitHub](https://img.shields.io/badge/GitHub-ylhx--lzm-181717?style=for-the-badge&logo=github)](https://github.com/ylhx-lzm)
@@ -20,15 +20,16 @@
 
 ## 关于我 / About Me
 
-我是 **ylhx**（雨泪痕心），一名热爱技术的开发者。热衷于探索 **AI Agent**、**大语言模型（LLM）** 和 **全栈开发** 领域的前沿技术。
+我是 **ylhx**（雨泪痕心），2026 届应届生，正在备战秋招。热衷钻研 **大模型（LLM）** 原理、**AIGC** 应用落地与 **AI Agent** 工程实践。
 
-这个博客是我记录技术学习、分享实践经验的自留地。内容涵盖：
+这个博客是我的技术笔记本与成长记录，内容涵盖：
 
-- **AI Agent** — 从概念到实践，构建智能助手
-- **AIGC / LLM** — 大模型应用开发、RAG 架构、Prompt Engineering
-- **MCP 协议** — AI 工具调用与协议解析
-- **前后端开发** — 实战经验与技术沉淀
-- **开发工作流** — Claude Code、AI 驱动开发等效率工具
+- **秋招经验** — 笔试真题、面试复盘、算法准备、面经汇总
+- **大模型八股** — Transformer 架构、Attention 机制、RLHF、MoE、KV Cache 等核心考点
+- **大模型原理** — 从预训练到推理加速，从 Prompt 到 Agent 的底层原理解析
+- **AIGC 模型** — 文生文、文生图、多模态模型的应用开发与原理探析
+- **AI Agent / MCP** — Agent 架构、工具调用、MCP 协议解析与实战
+- **前后端开发** — 全栈实战与技术沉淀
 
 ## 博客特色 / Features
 
@@ -43,9 +44,11 @@
 | 文章 | 分类 |
 |------|------|
 | [AI Agent 入门：从概念到实践](./src/content/posts/ai-agent-intro.md) | AI Agent |
-| [AIGC 实战：LLM 应用开发指南](./src/content/posts/aigc-llm-app-guide.md) | AIGC |
-| [用 Claude Code 打造 AI 驱动的开发工作流](./src/content/posts/claude-code-agent-workflow.md) | 开发效率 |
+| [AIGC 实战：LLM 应用开发指南](./src/content/posts/aigc-llm-app-guide.md) | AIGC 模型 |
+| [用 Claude Code 打造 AI 驱动的开发工作流](./src/content/posts/claude-code-agent-workflow.md) | 开发工具 |
 | [MCP 协议：从 Agent 工具调用到协议解析](./src/content/posts/mcp-protocol-agent-tools.md) | MCP 协议 |
+
+> **更多内容持续更新中** — 秋招笔试面试经验、大模型八股、Transformer 原理等即将上线。
 
 ## 快速开始 / Quick Start
 
