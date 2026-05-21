@@ -1,4 +1,10 @@
 <script lang="ts">
+type TrendRow = {
+	day: string;
+	pv: number;
+	uv: number;
+};
+
 type DashboardRow = {
 	path?: string;
 	title?: string;
@@ -13,6 +19,10 @@ type DashboardData = {
 	totalLikes?: number;
 	totalPosts?: number;
 	todayViews?: number;
+	pendingComments?: number;
+	pendingFriends?: number;
+	subscriptions?: number;
+	trendRows?: TrendRow[];
 	topPosts?: DashboardRow[];
 	recentPosts?: DashboardRow[];
 	rows?: DashboardRow[];
@@ -65,6 +75,27 @@ async function loadDashboard() {
 $effect(() => {
 	loadDashboard();
 });
+
+// chart helpers
+let trendBarWidth = 16;
+let trendChartHeight = 150;
+let maxTrend = 1;
+let chartBars: Array<{x: number, pvH: number, uvH: number, label: string}> = [];
+
+$effect(() => {
+	const rows = dashboard.trendRows;
+	if (rows && rows.length > 0) {
+		maxTrend = Math.max(1, ...rows.map((r) => Math.max(r.pv, r.uv)));
+		chartBars = rows.map((row, i) => ({
+			x: i * 48 + 20,
+			pvH: (row.pv / maxTrend) * trendChartHeight,
+			uvH: (row.uv / maxTrend) * trendChartHeight,
+			label: row.day.slice(5)
+		}));
+	} else {
+		chartBars = [];
+	}
+});
 </script>
 
 <section class="card-base p-6">
@@ -109,6 +140,43 @@ $effect(() => {
 			<div class="mt-2 text-2xl font-bold">{numberFormat.format(asNumber(dashboard.todayViews))}</div>
 		</div>
 	</div>
+
+	<!-- 待审核卡片 -->
+	<div class="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
+		<div class="rounded-lg bg-amber-50/50 p-4 dark:bg-amber-950/20">
+			<div class="text-sm text-neutral-500 dark:text-neutral-400">待审核评论</div>
+			<div class="mt-2 text-2xl font-bold text-amber-600 dark:text-amber-400">{dashboard.pendingComments ?? "-"}</div>
+		</div>
+		<div class="rounded-lg bg-blue-50/50 p-4 dark:bg-blue-950/20">
+			<div class="text-sm text-neutral-500 dark:text-neutral-400">待审核友链</div>
+			<div class="mt-2 text-2xl font-bold text-blue-600 dark:text-blue-400">{dashboard.pendingFriends ?? "-"}</div>
+		</div>
+		<div class="rounded-lg bg-green-50/50 p-4 dark:bg-green-950/20">
+			<div class="text-sm text-neutral-500 dark:text-neutral-400">订阅数</div>
+			<div class="mt-2 text-2xl font-bold text-green-600 dark:text-green-400">{dashboard.subscriptions ?? "-"}</div>
+		</div>
+	</div>
+
+	<!-- 趋势图 -->
+	{#if dashboard.trendRows && dashboard.trendRows.length > 0}
+		<div class="mt-6">
+			<h3 class="mb-3 text-sm font-semibold text-neutral-600 dark:text-neutral-300">近 7 天趋势（PV / UV）</h3>
+			<div class="rounded-lg bg-black/5 p-4 dark:bg-white/10">
+				<svg viewBox="0 -10 350 220" class="w-full max-h-56">
+					{#each chartBars as bar}
+						<rect x={bar.x} y={trendChartHeight + 10 - bar.pvH} width={trendBarWidth} height={bar.pvH} rx="3" fill="var(--primary,#6366f1)" opacity="0.8" />
+						<rect x={bar.x + trendBarWidth + 4} y={trendChartHeight + 10 - bar.uvH} width={trendBarWidth} height={bar.uvH} rx="3" fill="#22c55e" opacity="0.7" />
+						<text x={bar.x + trendBarWidth + 2} y={trendChartHeight + 28} text-anchor="middle" font-size="9" fill="var(--content-meta,#888)">{bar.label}</text>
+					{/each}
+					<line x1="10" y1={trendChartHeight + 10} x2="340" y2={trendChartHeight + 10} stroke="var(--line-divider,#ccc)" stroke-width="1" />
+				</svg>
+				<div class="mt-1 flex gap-4 text-xs text-(--content-meta)">
+					<span><span class="inline-block w-3 h-3 rounded-sm mr-1 align-middle" style="background:var(--primary,#6366f1)"></span>PV</span>
+					<span><span class="inline-block w-3 h-3 rounded-sm mr-1 align-middle" style="background:#22c55e"></span>UV</span>
+				</div>
+			</div>
+		</div>
+	{/if}
 
 	<div class="mt-6 overflow-x-auto">
 		<table class="w-full min-w-[42rem] text-left text-sm">

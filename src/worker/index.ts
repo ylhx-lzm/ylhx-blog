@@ -42,8 +42,14 @@ export default {
 		const url = new URL(request.url);
 
 		if (url.pathname.startsWith("/admin/")) {
-			const auth = isLocalRequest(url) ? null : requireAdmin(request, env);
-			if (auth) return auth;
+			// 页面请求（HTML）放行，让客户端 JS 处理登录
+			// API 请求仍然需要鉴权
+			const accept = request.headers.get("Accept") || "";
+			const isPageRequest = accept.includes("text/html");
+			if (!isPageRequest) {
+				const auth = isLocalRequest(url) ? null : requireAdmin(request, env);
+				if (auth) return auth;
+			}
 			return (
 				env.ASSETS?.fetch(request) ?? new Response("Not found", { status: 404 })
 			);
@@ -255,8 +261,9 @@ async function verifyTurnstile(
 	env: Env,
 	token: unknown,
 ): Promise<boolean> {
+	// 未配置 TURNSTILE_SECRET_KEY 时跳过验证
+	if (!env.TURNSTILE_SECRET_KEY) return true;
 	if (typeof token !== "string" || !token) return false;
-	if (!env.TURNSTILE_SECRET_KEY) return false;
 
 	const response = await fetch(
 		"https://challenges.cloudflare.com/turnstile/v0/siteverify",
@@ -292,6 +299,12 @@ function now(): number {
 
 function today(): string {
 	return new Date().toISOString().slice(0, 10);
+}
+
+function daysAgo(n: number): string {
+	const d = new Date();
+	d.setDate(d.getDate() - n);
+	return d.toISOString().slice(0, 10);
 }
 
 function clientFingerprint(request: Request): string {
@@ -604,12 +617,18 @@ async function adminDashboard(env: Env): Promise<Response> {
 		 (SELECT COUNT(*) FROM friend_requests WHERE status = 'pending') AS pendingFriends,
 		 (SELECT COUNT(*) FROM subscriptions WHERE status = 'active') AS subscriptions`,
 	).first();
+	const trendRows = await env.DB.prepare(
+		"SELECT day, SUM(pv) AS pv, SUM(uv) AS uv FROM daily_stats WHERE day >= ? GROUP BY day ORDER BY day ASC LIMIT 7",
+	)
+		.bind(daysAgo(6))
+		.all();
 	return json({
 		ok: true,
 		data: {
 			...(totals || {}),
 			todayViews: todayRows?.todayViews || 0,
 			...(pending || {}),
+			trendRows: trendRows.results || [],
 			topPosts: topPosts.results || [],
 		},
 	});

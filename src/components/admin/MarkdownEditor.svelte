@@ -1,4 +1,6 @@
 <script lang="ts">
+import { marked } from "marked";
+
 type Draft = {
 	id?: string;
 	slug: string;
@@ -26,6 +28,8 @@ let current: Draft = {
 };
 let loading = true;
 let message = "";
+let previewHtml = "";
+let showPreview = false;
 
 const headers = () => {
 	const token = localStorage.getItem("firefly:admin-token");
@@ -53,6 +57,7 @@ async function openDraft(id: string | undefined) {
 	});
 	const data = await response.json();
 	current = data.draft || current;
+	renderPreview();
 }
 
 async function saveDraft() {
@@ -110,7 +115,26 @@ function newDraft() {
 		),
 		content: "",
 	};
+	previewHtml = "";
+	showPreview = false;
 	message = "";
+}
+
+async function renderPreview() {
+	if (!current.content.trim()) {
+		previewHtml = "<p style='color:var(--content-meta,#888);text-align:center;padding:2rem;'>暂无内容</p>";
+		return;
+	}
+	try {
+		previewHtml = await marked.parse(current.content);
+	} catch {
+		previewHtml = "<p style='color:red'>渲染失败</p>";
+	}
+}
+
+function togglePreview() {
+	showPreview = !showPreview;
+	if (showPreview) renderPreview();
 }
 
 $effect(() => {
@@ -155,10 +179,21 @@ $effect(() => {
 			<span>Frontmatter JSON</span>
 			<textarea class="admin-input min-h-32 font-mono" bind:value={current.frontmatter}></textarea>
 		</label>
-		<label class="space-y-1 text-sm">
-			<span>Markdown</span>
-			<textarea class="admin-input min-h-[28rem] font-mono" bind:value={current.content}></textarea>
-		</label>
+		<div class="space-y-1 text-sm">
+			<div class="flex items-center gap-4 mb-1">
+				<span class="font-medium">Markdown</span>
+				<button type="button" class="text-xs text-(--primary) cursor-pointer" onclick={togglePreview}>
+					{showPreview ? "编辑" : "预览"}
+				</button>
+			</div>
+			{#if showPreview}
+				<div class="admin-input min-h-[28rem] overflow-auto prose prose-sm dark:prose-invert max-w-none">
+					{@html previewHtml}
+				</div>
+			{:else}
+				<textarea class="admin-input min-h-[28rem] font-mono" bind:value={current.content} placeholder="在此输入 Markdown 内容..."></textarea>
+			{/if}
+		</div>
 		<div class="flex flex-wrap items-center gap-3">
 			<button class="btn-card rounded-lg px-4 py-2 font-medium" type="submit">保存草稿</button>
 			<button class="btn-card rounded-lg px-4 py-2 font-medium" type="button" onclick={publishDraft}>发布到 GitHub</button>

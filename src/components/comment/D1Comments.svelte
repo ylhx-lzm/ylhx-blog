@@ -167,7 +167,7 @@ const validateForm = (target: CommentForm): string => {
 	}
 	if (!content) return "请填写评论内容。";
 	if (content.length > maxContentLength) return "评论内容过长。";
-	if (!turnstileSiteKey) return "Turnstile siteKey 未配置，暂时无法提交评论。";
+	if (turnstileSiteKey && !turnstileToken) return "请先完成人机验证。";
 	if (!turnstileToken) return "请先完成人机验证。";
 	return "";
 };

@@ -31,6 +31,34 @@ const navItems = [
 	</div>
 </MainGridLayout>
 
+<script is:inline>
+	(function() {
+		var token = localStorage.getItem("firefly:admin-token");
+		if (!token || token === "null" || token === "") {
+			var overlay = document.createElement("div");
+			overlay.id = "admin-login-overlay";
+			overlay.style.cssText = "position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;";
+			overlay.innerHTML =
+				'<div style="background:var(--card-bg,#1e1e2e);padding:2rem;border-radius:1rem;width:320px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,0.3);text-align:center;">' +
+				'<h3 style="margin:0 0 1rem;font-weight:600;font-size:1.1rem;color:var(--content,#fff);">管理后台登录</h3>' +
+				'<form id="admin-login-form">' +
+				'<input type="password" id="admin-token-input" placeholder="请输入管理密码" style="width:100%;padding:0.75rem;border-radius:0.5rem;border:1px solid var(--line-divider,#444);background:var(--card-bg,#2a2a3e);color:var(--content,#fff);font-size:1rem;outline:none;box-sizing:border-box;" autofocus />' +
+				'<button type="submit" style="margin-top:1rem;width:100%;padding:0.7rem;border:none;border-radius:0.5rem;background:var(--primary,#6366f1);color:#fff;font-size:1rem;font-weight:600;cursor:pointer;">登录</button>' +
+				'</form></div>';
+			document.body.appendChild(overlay);
+			document.getElementById("admin-login-form").addEventListener("submit", function(e) {
+				e.preventDefault();
+				var value = document.getElementById("admin-token-input").value;
+				if (value) {
+					localStorage.setItem("firefly:admin-token", value);
+					overlay.remove();
+					location.reload();
+				}
+			});
+		}
+	})();
+</script>
+
 <style is:global>
 	.admin-input {
 		width: 100%;

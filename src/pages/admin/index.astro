@@ -16,4 +16,15 @@ import AdminLayout from "@/components/admin/AdminLayout.astro";
 			<a class="btn-card rounded-lg px-4 py-3 font-medium" href="/admin/announcements/">站内公告</a>
 		</div>
 	</div>
-</AdminLayout>
+<script is:inline>
+		(function() {
+			var token = localStorage.getItem("firefly:admin-token");
+			if (!token || token === "null" || token === "") {
+				var input = prompt("请输入 Admin Token（管理密码）：");
+				if (input) {
+					localStorage.setItem("firefly:admin-token", input);
+				}
+			}
+		})();
+	</script>
+	</AdminLayout>

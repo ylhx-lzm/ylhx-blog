@@ -86,7 +86,7 @@ export const commentConfig: CommentConfig = {
 	// Cloudflare D1 原生评论系统配置
 	d1: {
 		// Cloudflare Turnstile site key，用于提交评论防刷
-		turnstileSiteKey: "0x4AAAAAADTzKYZP-cca6wzq",
+		turnstileSiteKey: "",
 		// Worker API 地址，留空表示使用当前站点同源 /api/comments
 		apiBase: "",
 	},
