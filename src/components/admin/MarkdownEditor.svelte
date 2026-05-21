@@ -1,95 +1,121 @@
 <script lang="ts">
-	type Draft = {
-		id?: string;
-		slug: string;
-		title: string;
-		frontmatter: string;
-		content: string;
-		status?: string;
-		updated_at?: number;
+type Draft = {
+	id?: string;
+	slug: string;
+	title: string;
+	frontmatter: string;
+	content: string;
+	status?: string;
+	updated_at?: number;
+};
+
+let drafts: Draft[] = [];
+let current: Draft = {
+	slug: "",
+	title: "",
+	frontmatter: JSON.stringify(
+		{
+			published: new Date().toISOString().slice(0, 10),
+			category: "",
+			tags: [],
+		},
+		null,
+		2,
+	),
+	content: "",
+};
+let loading = true;
+let message = "";
+
+const headers = () => {
+	const token = localStorage.getItem("firefly:admin-token");
+	return {
+		"content-type": "application/json",
+		...(token ? { "x-admin-token": token } : {}),
 	};
+};
 
-	let drafts: Draft[] = [];
-	let current: Draft = {
-		slug: "",
-		title: "",
-		frontmatter: JSON.stringify({ published: new Date().toISOString().slice(0, 10), category: "", tags: [] }, null, 2),
-		content: "",
-	};
-	let loading = true;
-	let message = "";
-
-	const headers = () => {
-		const token = localStorage.getItem("firefly:admin-token");
-		return {
-			"content-type": "application/json",
-			...(token ? { "x-admin-token": token } : {}),
-		};
-	};
-
-	async function loadDrafts() {
-		loading = true;
-		try {
-			const response = await fetch("/api/admin/drafts", { headers: headers() });
-			const data = await response.json();
-			drafts = data.drafts || [];
-		} finally {
-			loading = false;
-		}
-	}
-
-	async function openDraft(id: string | undefined) {
-		if (!id) return;
-		const response = await fetch(`/api/admin/drafts/${encodeURIComponent(id)}`, { headers: headers() });
+async function loadDrafts() {
+	loading = true;
+	try {
+		const response = await fetch("/api/admin/drafts", { headers: headers() });
 		const data = await response.json();
-		current = data.draft || current;
+		drafts = data.drafts || [];
+	} finally {
+		loading = false;
 	}
+}
 
-	async function saveDraft() {
-		message = "保存中...";
-		const response = await fetch(current.id ? `/api/admin/drafts/${encodeURIComponent(current.id)}` : "/api/admin/drafts", {
+async function openDraft(id: string | undefined) {
+	if (!id) return;
+	const response = await fetch(`/api/admin/drafts/${encodeURIComponent(id)}`, {
+		headers: headers(),
+	});
+	const data = await response.json();
+	current = data.draft || current;
+}
+
+async function saveDraft() {
+	message = "保存中...";
+	const response = await fetch(
+		current.id
+			? `/api/admin/drafts/${encodeURIComponent(current.id)}`
+			: "/api/admin/drafts",
+		{
 			method: current.id ? "PATCH" : "POST",
 			headers: headers(),
 			body: JSON.stringify(current),
-		});
-		const data = await response.json();
-		if (!response.ok) {
-			message = data.message || "保存失败";
-			return;
-		}
-		current = data.draft;
-		message = "已保存";
-		await loadDrafts();
+		},
+	);
+	const data = await response.json();
+	if (!response.ok) {
+		message = data.message || "保存失败";
+		return;
 	}
+	current = data.draft;
+	message = "已保存";
+	await loadDrafts();
+}
 
-	async function publishDraft() {
-		if (!current.id) {
-			message = "请先保存草稿。";
-			return;
-		}
-		message = "发布中...";
-		const response = await fetch(`/api/admin/drafts/${encodeURIComponent(current.id)}/publish`, {
+async function publishDraft() {
+	if (!current.id) {
+		message = "请先保存草稿。";
+		return;
+	}
+	message = "发布中...";
+	const response = await fetch(
+		`/api/admin/drafts/${encodeURIComponent(current.id)}/publish`,
+		{
 			method: "POST",
 			headers: headers(),
-		});
-		const data = await response.json();
-		message = response.ok ? `已发布：${data.path}` : data.message || "发布失败";
-		await loadDrafts();
-	}
+		},
+	);
+	const data = await response.json();
+	message = response.ok ? `已发布：${data.path}` : data.message || "发布失败";
+	await loadDrafts();
+}
 
-	function newDraft() {
-		current = {
-			slug: "",
-			title: "",
-			frontmatter: JSON.stringify({ published: new Date().toISOString().slice(0, 10), category: "", tags: [] }, null, 2),
-			content: "",
-		};
-		message = "";
-	}
+function newDraft() {
+	current = {
+		slug: "",
+		title: "",
+		frontmatter: JSON.stringify(
+			{
+				published: new Date().toISOString().slice(0, 10),
+				category: "",
+				tags: [],
+			},
+			null,
+			2,
+		),
+		content: "",
+	};
+	message = "";
+}
 
-	$effect(() => {
-		loadDrafts();
-	});
+$effect(() => {
+	loadDrafts();
+});
 </script>
 
 <section class="grid gap-4 lg:grid-cols-[18rem_1fr]">

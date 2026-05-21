@@ -1,68 +1,70 @@
 <script lang="ts">
-	type DashboardRow = {
-		path?: string;
-		title?: string;
-		views?: number;
-		likes?: number;
-		updatedAt?: string;
-		lastViewedAt?: string;
-	};
+type DashboardRow = {
+	path?: string;
+	title?: string;
+	views?: number;
+	likes?: number;
+	updatedAt?: string;
+	lastViewedAt?: string;
+};
 
-	type DashboardData = {
-		totalViews?: number;
-		totalLikes?: number;
-		totalPosts?: number;
-		todayViews?: number;
-		topPosts?: DashboardRow[];
-		recentPosts?: DashboardRow[];
-		rows?: DashboardRow[];
-	};
+type DashboardData = {
+	totalViews?: number;
+	totalLikes?: number;
+	totalPosts?: number;
+	todayViews?: number;
+	topPosts?: DashboardRow[];
+	recentPosts?: DashboardRow[];
+	rows?: DashboardRow[];
+};
 
-	let loading = $state(true);
-	let error = $state("");
-	let dashboard = $state<DashboardData>({});
+let loading = $state(true);
+let error = $state("");
+let dashboard = $state<DashboardData>({});
 
-	const numberFormat = new Intl.NumberFormat();
+const numberFormat = new Intl.NumberFormat();
 
-	function adminHeaders() {
-		const token = localStorage.getItem("firefly:admin-token");
-		return token ? { Accept: "application/json", "x-admin-token": token } : { Accept: "application/json" };
-	}
+function adminHeaders() {
+	const token = localStorage.getItem("firefly:admin-token");
+	return token
+		? { Accept: "application/json", "x-admin-token": token }
+		: { Accept: "application/json" };
+}
 
-	function asNumber(value: unknown) {
-		return typeof value === "number" && Number.isFinite(value) ? value : 0;
-	}
+function asNumber(value: unknown) {
+	return typeof value === "number" && Number.isFinite(value) ? value : 0;
+}
 
-	function normalizeRows(data: DashboardData) {
-		return data.topPosts || data.recentPosts || data.rows || [];
-	}
+function normalizeRows(data: DashboardData) {
+	return data.topPosts || data.recentPosts || data.rows || [];
+}
 
-	async function loadDashboard() {
-		loading = true;
-		error = "";
+async function loadDashboard() {
+	loading = true;
+	error = "";
 
-		try {
-			const response = await fetch("/api/admin/dashboard", {
-				headers: adminHeaders(),
-				credentials: "same-origin",
-			});
+	try {
+		const response = await fetch("/api/admin/dashboard", {
+			headers: adminHeaders(),
+			credentials: "same-origin",
+		});
 
-			if (!response.ok) {
-				throw new Error(`请求失败：${response.status}`);
-			}
-
-			const data = await response.json();
-			dashboard = data?.data || data || {};
-		} catch (err) {
-			error = err instanceof Error ? err.message : "无法加载统计数据";
-		} finally {
-			loading = false;
+		if (!response.ok) {
+			throw new Error(`请求失败：${response.status}`);
 		}
-	}
 
-	$effect(() => {
-		loadDashboard();
-	});
+		const data = await response.json();
+		dashboard = data?.data || data || {};
+	} catch (err) {
+		error = err instanceof Error ? err.message : "无法加载统计数据";
+	} finally {
+		loading = false;
+	}
+}
+
+$effect(() => {
+	loadDashboard();
+});
 </script>
 
 <section class="card-base p-6">

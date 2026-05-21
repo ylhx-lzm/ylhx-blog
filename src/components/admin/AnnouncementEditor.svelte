@@ -1,47 +1,60 @@
 <script lang="ts">
-	type Announcement = {
-		id?: string;
-		title: string;
-		content: string;
-		enabled: number | boolean;
+type Announcement = {
+	id?: string;
+	title: string;
+	content: string;
+	enabled: number | boolean;
+};
+
+let announcements: Announcement[] = [];
+let current: Announcement = { title: "", content: "", enabled: true };
+let message = "";
+
+const headers = () => {
+	const token = localStorage.getItem("firefly:admin-token");
+	return {
+		"content-type": "application/json",
+		...(token ? { "x-admin-token": token } : {}),
 	};
+};
 
-	let announcements: Announcement[] = [];
-	let current: Announcement = { title: "", content: "", enabled: true };
-	let message = "";
+async function load() {
+	const response = await fetch("/api/admin/announcements", {
+		headers: headers(),
+	});
+	const data = await response.json();
+	announcements = data.announcements || [];
+}
 
-	const headers = () => {
-		const token = localStorage.getItem("firefly:admin-token");
-		return { "content-type": "application/json", ...(token ? { "x-admin-token": token } : {}) };
-	};
-
-	async function load() {
-		const response = await fetch("/api/admin/announcements", { headers: headers() });
-		const data = await response.json();
-		announcements = data.announcements || [];
-	}
-
-	async function save() {
-		const response = await fetch(current.id ? `/api/admin/announcements/${encodeURIComponent(current.id)}` : "/api/admin/announcements", {
+async function save() {
+	const response = await fetch(
+		current.id
+			? `/api/admin/announcements/${encodeURIComponent(current.id)}`
+			: "/api/admin/announcements",
+		{
 			method: current.id ? "PATCH" : "POST",
 			headers: headers(),
 			body: JSON.stringify(current),
-		});
-		const data = await response.json();
-		message = response.ok ? "已保存" : data.message || "保存失败";
-		await load();
-	}
+		},
+	);
+	const data = await response.json();
+	message = response.ok ? "已保存" : data.message || "保存失败";
+	await load();
+}
 
-	async function remove(id: string | undefined) {
-		if (!id) return;
-		await fetch(`/api/admin/announcements/${encodeURIComponent(id)}`, { method: "DELETE", headers: headers() });
-		current = { title: "", content: "", enabled: true };
-		await load();
-	}
-
-	$effect(() => {
-		load();
+async function remove(id: string | undefined) {
+	if (!id) return;
+	await fetch(`/api/admin/announcements/${encodeURIComponent(id)}`, {
+		method: "DELETE",
+		headers: headers(),
 	});
+	current = { title: "", content: "", enabled: true };
+	await load();
+}
+
+$effect(() => {
+	load();
+});
 </script>
 
 <section class="grid gap-4 lg:grid-cols-[20rem_1fr]">

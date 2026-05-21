@@ -36,26 +36,26 @@ export const backgroundWallpaper: BackgroundWallpaperConfig = {
 	 *   "assets/images/MobileWallpaper/m2.avif",
 	 * ],
 	 */
-		src: {
-			// 桌面背景图片（支持单张或多张随机）
-			// desktop: "assets/images/DesktopWallpaper/d1.avif",
-			desktop: [
-				"assets/images/DesktopWallpaper/d1.avif",
-				"assets/images/DesktopWallpaper/d2.avif",
-				"assets/images/DesktopWallpaper/d3.avif",
-				"assets/images/DesktopWallpaper/d4.avif",
-				"assets/images/DesktopWallpaper/d5.avif",
-			],
-			// 移动背景图片（支持单张或多张随机）
-			// mobile: "assets/images/MobileWallpaper/m1.avif",
-			mobile: [
-				"assets/images/MobileWallpaper/m1.avif",
-				"assets/images/MobileWallpaper/m2.avif",
-				"assets/images/MobileWallpaper/m3.avif",
-				"assets/images/MobileWallpaper/m4.avif",
-				"assets/images/MobileWallpaper/m5.avif",
-			],
-		},
+	src: {
+		// 桌面背景图片（支持单张或多张随机）
+		// desktop: "assets/images/DesktopWallpaper/d1.avif",
+		desktop: [
+			"assets/images/DesktopWallpaper/d1.avif",
+			"assets/images/DesktopWallpaper/d2.avif",
+			"assets/images/DesktopWallpaper/d3.avif",
+			"assets/images/DesktopWallpaper/d4.avif",
+			"assets/images/DesktopWallpaper/d5.avif",
+		],
+		// 移动背景图片（支持单张或多张随机）
+		// mobile: "assets/images/MobileWallpaper/m1.avif",
+		mobile: [
+			"assets/images/MobileWallpaper/m1.avif",
+			"assets/images/MobileWallpaper/m2.avif",
+			"assets/images/MobileWallpaper/m3.avif",
+			"assets/images/MobileWallpaper/m4.avif",
+			"assets/images/MobileWallpaper/m5.avif",
+		],
+	},
 	// 横幅壁纸和全屏壁纸共享配置
 	common: {
 		// 横幅文字遮罩暗度，0-1之间，值越大越暗

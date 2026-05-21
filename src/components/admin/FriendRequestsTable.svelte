@@ -1,42 +1,48 @@
 <script lang="ts">
-	type FriendRequest = {
-		id: string;
-		name: string;
-		url: string;
-		avatar?: string;
-		description?: string;
-		status: string;
-		created_at: number;
+type FriendRequest = {
+	id: string;
+	name: string;
+	url: string;
+	avatar?: string;
+	description?: string;
+	status: string;
+	created_at: number;
+};
+
+let friends: FriendRequest[] = [];
+let status = "pending";
+let message = "";
+
+const headers = () => {
+	const token = localStorage.getItem("firefly:admin-token");
+	return {
+		"content-type": "application/json",
+		...(token ? { "x-admin-token": token } : {}),
 	};
+};
 
-	let friends: FriendRequest[] = [];
-	let status = "pending";
-	let message = "";
+async function load() {
+	const response = await fetch(
+		`/api/admin/friends?status=${encodeURIComponent(status)}`,
+		{ headers: headers() },
+	);
+	const data = await response.json();
+	friends = data.friends || [];
+	message = response.ok ? "" : data.message || "加载失败";
+}
 
-	const headers = () => {
-		const token = localStorage.getItem("firefly:admin-token");
-		return { "content-type": "application/json", ...(token ? { "x-admin-token": token } : {}) };
-	};
-
-	async function load() {
-		const response = await fetch(`/api/admin/friends?status=${encodeURIComponent(status)}`, { headers: headers() });
-		const data = await response.json();
-		friends = data.friends || [];
-		message = response.ok ? "" : data.message || "加载失败";
-	}
-
-	async function update(id: string, nextStatus: string) {
-		await fetch(`/api/admin/friends/${encodeURIComponent(id)}`, {
-			method: "PATCH",
-			headers: headers(),
-			body: JSON.stringify({ status: nextStatus }),
-		});
-		await load();
-	}
-
-	$effect(() => {
-		load();
+async function update(id: string, nextStatus: string) {
+	await fetch(`/api/admin/friends/${encodeURIComponent(id)}`, {
+		method: "PATCH",
+		headers: headers(),
+		body: JSON.stringify({ status: nextStatus }),
 	});
+	await load();
+}
+
+$effect(() => {
+	load();
+});
 </script>
 
 <section class="card-base p-6">

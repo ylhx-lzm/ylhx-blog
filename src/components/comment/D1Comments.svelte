@@ -54,7 +54,12 @@ const maxContentLength = 1200;
 
 let comments: D1Comment[] = [];
 let form: CommentForm = { author: "", email: "", website: "", content: "" };
-let replyForm: CommentForm = { author: "", email: "", website: "", content: "" };
+let replyForm: CommentForm = {
+	author: "",
+	email: "",
+	website: "",
+	content: "",
+};
 let replyTo: D1Comment | null = null;
 let loading = true;
 let submitting = false;
@@ -67,7 +72,8 @@ let turnstileWidgetId = "";
 
 const normalizeApiBase = (value: string): string => value.replace(/\/+$/, "");
 
-const commentsEndpoint = (): string => `${normalizeApiBase(apiBase)}/api/comments`;
+const commentsEndpoint = (): string =>
+	`${normalizeApiBase(apiBase)}/api/comments`;
 
 const likeEndpoint = (id: string): string =>
 	`${commentsEndpoint()}/${encodeURIComponent(id)}/like`;
@@ -92,7 +98,11 @@ const formatDate = (value?: number | string): string => {
 
 const normalizeComments = (data: unknown): D1Comment[] => {
 	if (Array.isArray(data)) return data as D1Comment[];
-	if (data && typeof data === "object" && Array.isArray((data as { comments?: unknown }).comments)) {
+	if (
+		data &&
+		typeof data === "object" &&
+		Array.isArray((data as { comments?: unknown }).comments)
+	) {
 		return (data as { comments: D1Comment[] }).comments;
 	}
 	return [];
@@ -139,14 +149,18 @@ const validateForm = (target: CommentForm): string => {
 	if (!author) return "请填写昵称。";
 	if (author.length > maxAuthorLength) return "昵称过长。";
 	if (!email) return "请填写邮箱。";
-	if (email.length > maxEmailLength || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+	if (
+		email.length > maxEmailLength ||
+		!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+	) {
 		return "邮箱格式不正确。";
 	}
 	if (website) {
 		if (website.length > maxWebsiteLength) return "网站链接过长。";
 		try {
 			const url = new URL(website);
-			if (!["http:", "https:"].includes(url.protocol)) return "网站链接必须是 http 或 https。";
+			if (!["http:", "https:"].includes(url.protocol))
+				return "网站链接必须是 http 或 https。";
 		} catch {
 			return "网站链接格式不正确。";
 		}
@@ -189,17 +203,31 @@ const submitComment = async (parentId?: string) => {
 		});
 		if (!response.ok) {
 			const data = await response.json().catch(() => null);
-			throw new Error(data?.message || data?.error || `HTTP ${response.status}`);
+			throw new Error(
+				data?.message || data?.error || `HTTP ${response.status}`,
+			);
 		}
-		form = { author: form.author, email: form.email, website: form.website, content: "" };
-		replyForm = { author: form.author, email: form.email, website: form.website, content: "" };
+		form = {
+			author: form.author,
+			email: form.email,
+			website: form.website,
+			content: "",
+		};
+		replyForm = {
+			author: form.author,
+			email: form.email,
+			website: form.website,
+			content: "",
+		};
 		replyTo = null;
 		resetTurnstile();
 		setNotice("评论已提交，审核通过后会显示。");
 		await loadComments();
 	} catch (error) {
 		console.error("Failed to submit D1 comment:", error);
-		setError(error instanceof Error ? error.message : "评论提交失败，请稍后重试。");
+		setError(
+			error instanceof Error ? error.message : "评论提交失败，请稍后重试。",
+		);
 		resetTurnstile();
 	} finally {
 		submitting = false;
@@ -248,7 +276,8 @@ const loadTurnstile = () =>
 			return;
 		}
 		const script = document.createElement("script");
-		script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+		script.src =
+			"https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
 		script.async = true;
 		script.defer = true;
 		script.addEventListener("load", () => resolve(), { once: true });
