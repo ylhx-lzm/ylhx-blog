@@ -1,8 +1,8 @@
 <div align="center">
 
-# ylhx / 雨泪痕心
+# ylhx 
 
-> **Code, Life, Thinking** — 记录秋招备战、大模型原理与 AI 工程实践
+> **Code, Life, Thinking**
 
 [![Blog](https://img.shields.io/badge/Blog-ylhx.site-8B5CF6?style=for-the-badge)](https://ylhx.site)
 [![GitHub](https://img.shields.io/badge/GitHub-ylhx--lzm-181717?style=for-the-badge&logo=github)](https://github.com/ylhx-lzm)
@@ -19,8 +19,6 @@
 ---
 
 ## 关于我 / About Me
-
-我是 **ylhx**（雨泪痕心），2026 届应届生，正在备战秋招。热衷钻研 **大模型（LLM）** 原理、**AIGC** 应用落地与 **AI Agent** 工程实践。
 
 这个博客是我的技术笔记本与成长记录，内容涵盖：
 
