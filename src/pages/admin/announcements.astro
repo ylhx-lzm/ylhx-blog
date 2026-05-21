@@ -1,0 +1,8 @@
+---
+import AnnouncementEditor from "@/components/admin/AnnouncementEditor.svelte";
+import AdminLayout from "@/components/admin/AdminLayout.astro";
+---
+
+<AdminLayout title="站内公告" description="管理首页与全站公告">
+	<AnnouncementEditor client:load />
+</AdminLayout>

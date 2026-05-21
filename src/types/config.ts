@@ -222,9 +222,9 @@ export type LicenseConfig = {
 export type CommentConfig = {
 	/**
 	 * 当前启用的评论系统类型
-	 * "none" | "twikoo" | "waline" | "giscus" | "disqus" | 'artalk'
+	 * "none" | "twikoo" | "waline" | "giscus" | "disqus" | "artalk" | "d1"
 	 */
-	type: "none" | "twikoo" | "waline" | "giscus" | "disqus" | "artalk";
+	type: "none" | "twikoo" | "waline" | "giscus" | "disqus" | "artalk" | "d1";
 	twikoo?: {
 		envId: string;
 		region?: string;
@@ -280,6 +280,16 @@ export type CommentConfig = {
 	};
 	disqus?: {
 		shortname: string;
+	};
+	d1?: {
+		/**
+		 * Cloudflare Turnstile site key. 留空时评论提交按钮会提示未配置。
+		 */
+		turnstileSiteKey: string;
+		/**
+		 * Worker API 地址。留空表示使用当前站点同源 /api/comments。
+		 */
+		apiBase?: string;
 	};
 };
 

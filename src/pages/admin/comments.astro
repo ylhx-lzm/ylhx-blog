@@ -1,0 +1,71 @@
+---
+import AdminLayout from "@/components/admin/AdminLayout.astro";
+---
+
+<AdminLayout title="评论审核" description="审核 D1 评论与留言">
+	<section class="card-base p-6">
+		<div class="flex flex-wrap items-center justify-between gap-3">
+			<h2 class="text-2xl font-bold">评论审核</h2>
+			<select id="comment-status" class="admin-input w-auto">
+				<option value="pending">待审核</option>
+				<option value="approved">已通过</option>
+				<option value="rejected">已拒绝</option>
+				<option value="all">全部</option>
+			</select>
+		</div>
+		<div id="comments-admin-list" class="mt-5 space-y-3 text-sm text-(--content-meta)">加载中...</div>
+	</section>
+</AdminLayout>
+
+<script is:inline>
+	(function () {
+		var list = document.getElementById("comments-admin-list");
+		var statusSelect = document.getElementById("comment-status");
+		function headers() {
+			var token = localStorage.getItem("firefly:admin-token");
+			return token ? { "content-type": "application/json", "x-admin-token": token } : { "content-type": "application/json" };
+		}
+		function escapeHtml(value) {
+			return String(value || "").replace(/[&<>"']/g, function (char) {
+				return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char];
+			});
+		}
+		async function load() {
+			list.textContent = "加载中...";
+			var status = statusSelect.value;
+			try {
+				var response = await fetch("/api/admin/comments?status=" + encodeURIComponent(status), { headers: headers() });
+				if (!response.ok) throw new Error("HTTP " + response.status);
+				var data = await response.json();
+				var comments = data.comments || [];
+				if (!comments.length) {
+					list.textContent = "暂无评论。";
+					return;
+				}
+				list.innerHTML = comments.map(function (item) {
+					return '<article class="rounded-lg border border-(--line-divider) p-4" data-id="' + escapeHtml(item.id) + '">' +
+						'<div class="flex flex-wrap justify-between gap-3"><div><strong>' + escapeHtml(item.author) + '</strong><span class="ml-2 text-xs">' + escapeHtml(item.status) + '</span><div class="text-xs">' + escapeHtml(item.path) + '</div></div>' +
+						'<div class="flex gap-2"><button data-action="approved" class="btn-card rounded-md px-3 py-1">通过</button><button data-action="rejected" class="btn-card rounded-md px-3 py-1">拒绝</button><button data-action="delete" class="btn-card rounded-md px-3 py-1">删除</button></div></div>' +
+						'<p class="mt-3 whitespace-pre-wrap text-(--content)">' + escapeHtml(item.content) + '</p></article>';
+				}).join("");
+			} catch (error) {
+				list.textContent = "加载失败：" + error.message;
+			}
+		}
+		list.addEventListener("click", async function (event) {
+			var button = event.target.closest("button[data-action]");
+			if (!button) return;
+			var article = button.closest("[data-id]");
+			var id = article && article.getAttribute("data-id");
+			var action = button.getAttribute("data-action");
+			if (!id) return;
+			var init = action === "delete"
+				? { method: "DELETE", headers: headers() }
+				: { method: "PATCH", headers: headers(), body: JSON.stringify({ status: action }) };
+			await fetch("/api/admin/comments/" + encodeURIComponent(id), init);
+			load();
+		});
+		statusSelect.addEventListener("change", load);
+		load();
+	})();
+</script>

@@ -6,6 +6,7 @@ import UmamiAnalytics from "@components/analytics/UmamiAnalytics.astro";
 import FancyboxManager from "@components/features/FancyboxManager.astro";
 import FontManager from "@components/features/FontManager.astro";
 import MusicManager from "@components/features/MusicManager.astro";
+import PublicAnnouncement from "@components/features/PublicAnnouncement.astro";
 import SakuraEffect from "@components/features/SakuraEffect.astro";
 import ConfigCarrier from "@components/layout/ConfigCarrier.astro";
 
@@ -577,6 +578,7 @@ const siteLang = lang.replace("_", "-");
     {shouldShowTopHighlight && <div class="top-gradient-highlight" />}
     <ConfigCarrier />
     <MusicManager />
+    <PublicAnnouncement />
     <slot />
 
 
@@ -586,6 +588,145 @@ const siteLang = lang.replace("_", "-");
 
     <!-- Fancybox Manager -->
     <FancyboxManager />
+    <script is:inline data-swup-ignore-script>
+      (function () {
+        if (window.__fireflyD1StatsReady) return;
+        window.__fireflyD1StatsReady = true;
+
+        var lastCountedPath = "";
+        var pendingViewPath = "";
+        var likeStoragePrefix = "firefly:d1-like:";
+
+        function normalizePath(path) {
+          if (!path) return window.location.pathname;
+          try {
+            return new URL(path, window.location.origin).pathname;
+          } catch (_error) {
+            return path;
+          }
+        }
+
+        function readCount(data, keys) {
+          for (var i = 0; i < keys.length; i++) {
+            var value = data && data[keys[i]];
+            if (typeof value === "number" && Number.isFinite(value)) return value;
+          }
+          return 0;
+        }
+
+        function setText(root, selector, value) {
+          var node = root.querySelector(selector);
+          if (node) node.textContent = String(value);
+        }
+
+        function setLiked(root, liked) {
+          var button = root.querySelector("[data-d1-like-button]");
+          if (!button) return;
+          button.setAttribute("aria-pressed", liked ? "true" : "false");
+          button.classList.toggle("text-(--primary)", liked);
+          button.classList.toggle("dark:text-(--primary)", liked);
+        }
+
+        async function fetchStats(root, path) {
+          try {
+            var response = await fetch("/api/stats?path=" + encodeURIComponent(path), {
+              headers: { Accept: "application/json" },
+              credentials: "same-origin",
+            });
+            if (!response.ok) throw new Error("stats request failed");
+            var payload = await response.json();
+            var data = payload && (payload.data || payload.stats || payload);
+            setText(root, "[data-d1-views]", readCount(data, ["views", "viewCount", "pv"]));
+            setText(root, "[data-d1-likes]", readCount(data, ["likes", "likeCount"]));
+          } catch (_error) {
+            setText(root, "[data-d1-views]", "--");
+            setText(root, "[data-d1-likes]", "--");
+          }
+        }
+
+        async function countView(path) {
+          if (!path || path === lastCountedPath || path === pendingViewPath) return;
+          pendingViewPath = path;
+          try {
+            await fetch("/api/stats/view", {
+              method: "POST",
+              headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+              },
+              credentials: "same-origin",
+              body: JSON.stringify({ path: path }),
+            });
+            lastCountedPath = path;
+          } catch (_error) {
+            // Keep the UI usable if the stats backend is unavailable.
+          } finally {
+            if (pendingViewPath === path) pendingViewPath = "";
+          }
+        }
+
+        function initStats() {
+          var roots = document.querySelectorAll("[data-d1-stats]");
+          roots.forEach(function (root) {
+            var path = normalizePath(root.getAttribute("data-path"));
+            root.setAttribute("data-path", path);
+            setLiked(root, localStorage.getItem(likeStoragePrefix + path) === "1");
+            fetchStats(root, path);
+
+            var button = root.querySelector("[data-d1-like-button]");
+            if (button && !button.hasAttribute("data-d1-like-bound")) {
+              button.setAttribute("data-d1-like-bound", "true");
+              button.addEventListener("click", async function () {
+                var nextLiked = localStorage.getItem(likeStoragePrefix + path) !== "1";
+                button.disabled = true;
+                try {
+                  var response = await fetch("/api/stats/like", {
+                    method: "POST",
+                    headers: {
+                      Accept: "application/json",
+                      "Content-Type": "application/json",
+                    },
+                    credentials: "same-origin",
+                    body: JSON.stringify({ path: path, liked: nextLiked }),
+                  });
+                  if (!response.ok) throw new Error("like request failed");
+                  var payload = await response.json();
+                  var data = payload && (payload.data || payload.stats || payload);
+                  localStorage.setItem(likeStoragePrefix + path, nextLiked ? "1" : "0");
+                  setLiked(root, nextLiked);
+                  if (data) {
+                    setText(root, "[data-d1-likes]", readCount(data, ["likes", "likeCount"]));
+                    setText(root, "[data-d1-views]", readCount(data, ["views", "viewCount", "pv"]));
+                  } else {
+                    fetchStats(root, path);
+                  }
+                } catch (_error) {
+                  fetchStats(root, path);
+                } finally {
+                  button.disabled = false;
+                }
+              });
+            }
+          });
+
+          var firstStats = document.querySelector("[data-d1-stats]");
+          if (firstStats) {
+            countView(normalizePath(firstStats.getAttribute("data-path")));
+          }
+        }
+
+        document.addEventListener("DOMContentLoaded", initStats);
+        document.addEventListener("astro:page-load", initStats);
+        document.addEventListener("swup:enable", function () {
+          if (window.swup && window.swup.hooks) {
+            window.swup.hooks.on("page:view", initStats);
+          }
+        });
+        if (window.swup && window.swup.hooks) {
+          window.swup.hooks.on("page:view", initStats);
+        }
+      })();
+    </script>
   </body>
 </html>
 

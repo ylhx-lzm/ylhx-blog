@@ -1,0 +1,8 @@
+---
+import DashboardStats from "@/components/admin/DashboardStats.svelte";
+import AdminLayout from "@/components/admin/AdminLayout.astro";
+---
+
+<AdminLayout title="访问统计" description="D1 访问量与点赞数据">
+	<DashboardStats client:load />
+</AdminLayout>

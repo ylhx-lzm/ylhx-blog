@@ -2,6 +2,7 @@
 import { getEntry, render } from "astro:content";
 import Comment from "@components/comment/index.astro";
 import Markdown from "@components/common/Markdown.astro";
+import FriendApplyForm from "@components/features/FriendApplyForm.astro";
 import { Icon } from "astro-icon/components";
 import {
 	commentConfig,
@@ -159,6 +160,8 @@ const description =
       </Markdown>
     </div>
   )}
+
+  <FriendApplyForm />
 
   <!-- 评论区 -->
   {isCommentEnabled && (

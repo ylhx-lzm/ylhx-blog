@@ -1,0 +1,73 @@
+---
+import { commentConfig } from "@/config/commentConfig";
+
+const siteKey = commentConfig.d1?.turnstileSiteKey || "";
+---
+
+<form class="flex flex-wrap gap-2" data-subscribe-form data-turnstile-site-key={siteKey}>
+	<input
+		class="min-w-0 flex-1 rounded-lg border border-(--line-divider) bg-(--card-bg) px-3 py-2 text-sm"
+		type="email"
+		name="email"
+		placeholder="邮箱订阅"
+		required
+	/>
+	<div class="w-full" data-subscribe-turnstile></div>
+	<button class="btn-card rounded-lg px-3 py-2 text-sm font-medium" type="submit">订阅</button>
+	<span class="w-full text-xs text-(--content-meta)" data-subscribe-message></span>
+</form>
+
+<script is:inline>
+	(function () {
+		document.querySelectorAll("[data-subscribe-form]").forEach(function (form) {
+			var message = form.querySelector("[data-subscribe-message]");
+			var turnstileRoot = form.querySelector("[data-subscribe-turnstile]");
+			var siteKey = form.getAttribute("data-turnstile-site-key") || "";
+			var token = "";
+			function renderTurnstile() {
+				if (!siteKey || !window.turnstile || !turnstileRoot) return;
+				window.turnstile.render(turnstileRoot, {
+					sitekey: siteKey,
+					callback: function (nextToken) {
+						token = nextToken;
+					},
+					"expired-callback": function () {
+						token = "";
+					},
+				});
+			}
+			if (siteKey) {
+				if (window.turnstile) {
+					renderTurnstile();
+				} else {
+					var script = document.createElement("script");
+					script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+					script.async = true;
+					script.defer = true;
+					script.onload = renderTurnstile;
+					document.head.appendChild(script);
+				}
+			}
+			form.addEventListener("submit", async function (event) {
+				event.preventDefault();
+				var email = new FormData(form).get("email");
+				message.textContent = "提交中...";
+				try {
+					var response = await fetch("/api/subscribe", {
+						method: "POST",
+						headers: { "content-type": "application/json", Accept: "application/json" },
+						body: JSON.stringify({ email: email, turnstileToken: token }),
+					});
+					var data = await response.json().catch(function () {
+						return {};
+					});
+					if (!response.ok) throw new Error(data.message || "订阅失败");
+					form.reset();
+					message.textContent = "订阅成功。";
+				} catch (error) {
+					message.textContent = error.message || "订阅失败";
+				}
+			});
+		});
+	})();
+</script>

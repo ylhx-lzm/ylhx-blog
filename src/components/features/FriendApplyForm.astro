@@ -1,0 +1,102 @@
+---
+import { commentConfig } from "@/config/commentConfig";
+
+const siteKey = commentConfig.d1?.turnstileSiteKey || "";
+---
+
+<section class="card-base mt-4 p-6">
+	<h2 class="text-xl font-bold text-(--content)">友链申请</h2>
+	<form id="friend-apply-form" class="mt-4 grid gap-3 md:grid-cols-2" data-turnstile-site-key={siteKey}>
+		<input class="friend-input" name="name" maxlength="60" placeholder="站点名称" required />
+		<input class="friend-input" name="url" maxlength="240" placeholder="站点链接 https://example.com" required />
+		<input class="friend-input" name="avatar" maxlength="240" placeholder="头像链接（可选）" />
+		<input class="friend-input" name="email" maxlength="120" placeholder="邮箱（可选）" />
+		<textarea class="friend-input min-h-24 md:col-span-2" name="description" maxlength="240" placeholder="站点描述"></textarea>
+		<div id="friend-turnstile" class="md:col-span-2"></div>
+		<div class="flex flex-wrap items-center gap-3 md:col-span-2">
+			<button type="submit" class="btn-card rounded-lg px-4 py-2 font-medium">提交申请</button>
+			<span id="friend-apply-message" class="text-sm text-(--content-meta)"></span>
+		</div>
+	</form>
+</section>
+
+<script is:inline>
+	(function () {
+		var form = document.getElementById("friend-apply-form");
+		if (!form) return;
+		var message = document.getElementById("friend-apply-message");
+		var token = "";
+		var siteKey = form.getAttribute("data-turnstile-site-key") || "";
+
+		function setMessage(value) {
+			message.textContent = value;
+		}
+
+		function loadTurnstile() {
+			if (!siteKey) return;
+			var render = function () {
+				if (!window.turnstile) return;
+				window.turnstile.render("#friend-turnstile", {
+					sitekey: siteKey,
+					callback: function (nextToken) {
+						token = nextToken;
+					},
+					"expired-callback": function () {
+						token = "";
+					},
+				});
+			};
+			if (window.turnstile) {
+				render();
+				return;
+			}
+			var script = document.createElement("script");
+			script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+			script.async = true;
+			script.defer = true;
+			script.onload = render;
+			document.head.appendChild(script);
+		}
+
+		form.addEventListener("submit", async function (event) {
+			event.preventDefault();
+			var data = Object.fromEntries(new FormData(form).entries());
+			data.turnstileToken = token;
+			setMessage("提交中...");
+			try {
+				var response = await fetch("/api/friends/apply", {
+					method: "POST",
+					headers: { "content-type": "application/json", Accept: "application/json" },
+					body: JSON.stringify(data),
+				});
+				var result = await response.json().catch(function () {
+					return {};
+				});
+				if (!response.ok) throw new Error(result.message || "提交失败");
+				form.reset();
+				setMessage("已提交，审核通过后会加入友链。");
+			} catch (error) {
+				setMessage(error.message || "提交失败");
+			}
+		});
+
+		loadTurnstile();
+	})();
+</script>
+
+<style>
+	.friend-input {
+		width: 100%;
+		border-radius: 0.5rem;
+		border: 1px solid var(--line-divider);
+		background: var(--card-bg);
+		padding: 0.75rem 0.875rem;
+		color: var(--content);
+		outline: none;
+	}
+
+	.friend-input:focus {
+		border-color: var(--primary);
+		box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary) 18%, transparent);
+	}
+</style>

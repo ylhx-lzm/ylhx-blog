@@ -1,6 +1,14 @@
-name="ylhx-blog"
-compatibility_date="2026-05-21"
+name = "ylhx-blog"
+compatibility_date = "2026-05-21"
+main = "src/worker/index.ts"
 
 [assets]
-directory="./dist"
+directory = "./dist"
+binding = "ASSETS"
+run_worker_first = ["/api/*", "/admin/*"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "ylhx_blog"
+database_id = "d48176e3-bb42-4157-844d-e8fddf8ae0d6"
 

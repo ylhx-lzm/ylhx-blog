@@ -1,0 +1,8 @@
+---
+import MarkdownEditor from "@/components/admin/MarkdownEditor.svelte";
+import AdminLayout from "@/components/admin/AdminLayout.astro";
+---
+
+<AdminLayout title="文章草稿" description="在 D1 保存草稿，通过 GitHub API 发布 Markdown">
+	<MarkdownEditor client:load />
+</AdminLayout>

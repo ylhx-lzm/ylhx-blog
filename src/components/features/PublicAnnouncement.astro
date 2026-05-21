@@ -1,0 +1,41 @@
+<div
+	id="firefly-public-announcement"
+	class="hidden border-b border-(--line-divider) bg-(--card-bg)/95 px-4 py-3 text-sm"
+	data-swup-ignore
+>
+	<div class="mx-auto flex max-w-[var(--page-width)] flex-wrap items-center gap-2 text-(--content)">
+		<strong data-announcement-title></strong>
+		<span data-announcement-content class="text-(--content-meta)"></span>
+		<button
+			type="button"
+			class="ml-auto rounded-md px-2 py-1 text-xs text-(--content-meta) hover:bg-(--btn-regular-bg)"
+			data-announcement-close
+			aria-label="关闭公告"
+		>
+			关闭
+		</button>
+	</div>
+</div>
+
+<script is:inline data-swup-ignore-script>
+	(function () {
+		var root = document.getElementById("firefly-public-announcement");
+		if (!root || sessionStorage.getItem("firefly:announcement:closed") === "1") return;
+		fetch("/api/public/announcement", { headers: { Accept: "application/json" } })
+			.then(function (response) {
+				return response.ok ? response.json() : null;
+			})
+			.then(function (data) {
+				var item = data && data.announcement;
+				if (!item) return;
+				root.querySelector("[data-announcement-title]").textContent = item.title || "";
+				root.querySelector("[data-announcement-content]").textContent = item.content || "";
+				root.classList.remove("hidden");
+			})
+			.catch(function () {});
+		root.querySelector("[data-announcement-close]").addEventListener("click", function () {
+			sessionStorage.setItem("firefly:announcement:closed", "1");
+			root.classList.add("hidden");
+		});
+	})();
+</script>

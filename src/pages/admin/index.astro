@@ -1,0 +1,19 @@
+---
+import AdminLayout from "@/components/admin/AdminLayout.astro";
+---
+
+<AdminLayout title="后台管理" description="Cloudflare D1 博客后台">
+	<div class="card-base p-6">
+		<h2 class="text-2xl font-bold text-neutral-900 dark:text-neutral-100">后台管理</h2>
+		<p class="mt-2 text-sm text-neutral-500 dark:text-neutral-400">
+			此区域建议在 Cloudflare Access 中限制为自己的邮箱。接口会校验 Access 邮箱 header；本地调试可设置 Worker secret ADMIN_DEV_TOKEN，并在浏览器 localStorage 写入 firefly:admin-token。
+		</p>
+		<div class="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+			<a class="btn-card rounded-lg px-4 py-3 font-medium" href="/admin/stats/">访问统计</a>
+			<a class="btn-card rounded-lg px-4 py-3 font-medium" href="/admin/comments/">评论审核</a>
+			<a class="btn-card rounded-lg px-4 py-3 font-medium" href="/admin/posts/">Markdown 草稿</a>
+			<a class="btn-card rounded-lg px-4 py-3 font-medium" href="/admin/friends/">友链申请</a>
+			<a class="btn-card rounded-lg px-4 py-3 font-medium" href="/admin/announcements/">站内公告</a>
+		</div>
+	</div>
+</AdminLayout>
