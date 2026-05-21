@@ -1,6 +1,6 @@
 <div align="center">
   
-> **Coding, Living, Thinking**
+# **Coding, Living, Thinking**
 
 [![Blog][(https://img.shields.io/badge/Blog-ylhx.site-8B5CF6?style=for-the-badge)](https://ylhx.site)](https://blog.ylhx.site/)
 [![GitHub](https://img.shields.io/badge/GitHub-ylhx--lzm-181717?style=for-the-badge&logo=github)](https://github.com/ylhx-lzm)
