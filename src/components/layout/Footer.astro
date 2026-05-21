@@ -6,7 +6,8 @@ import { commentConfig, footerConfig, profileConfig } from "@/config";
 import { url } from "@/utils/url-utils";
 
 // 只有 D1 评论系统启用时才显示订阅表单（依赖 Turnstile）
-const enableSubscribe = commentConfig.type === "d1" && commentConfig.d1?.turnstileSiteKey;
+const enableSubscribe =
+	commentConfig.type === "d1" && commentConfig.d1?.turnstileSiteKey;
 
 const currentYear = new Date().getFullYear();
 
