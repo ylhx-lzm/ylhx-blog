@@ -725,6 +725,18 @@ const siteLang = lang.replace("_", "-");
         if (window.swup && window.swup.hooks) {
           window.swup.hooks.on("page:view", initStats);
         }
+
+        // 双击点赞支持
+        document.addEventListener("dblclick", function (e) {
+          // 忽略按钮/输入框/链接上的双击
+          var tag = e.target && e.target.tagName;
+          if (tag === "BUTTON" || tag === "INPUT" || tag === "TEXTAREA" || tag === "A") return;
+          // 查找附近的数据点赞按钮
+          var statsRoot = e.target.closest("[data-d1-stats]");
+          if (!statsRoot) return;
+          var likeBtn = statsRoot.querySelector("[data-d1-like-button]");
+          if (likeBtn && !likeBtn.disabled) likeBtn.click();
+        });
       })();
     </script>
   </body>

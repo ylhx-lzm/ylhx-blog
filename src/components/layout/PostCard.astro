@@ -3,12 +3,13 @@ import type { CollectionEntry } from "astro:content";
 import { render } from "astro:content";
 import { Icon } from "astro-icon/components";
 import CoverImage from "@/components/common/CoverImage.astro";
+import D1Stats from "@/components/features/D1Stats.astro";
 import PostMetadata from "@/components/layout/PostMeta.astro";
 import { siteConfig } from "@/config";
 import I18nKey from "@/i18n/i18nKey";
 import { i18n } from "@/i18n/translation";
 import { getApiUrlList, processCoverImageSync } from "@/utils/image-utils";
-import { getFileDirFromPath, getTagUrl } from "@/utils/url-utils";
+import { getFileDirFromPath, getTagUrl, removeFileExtension } from "@/utils/url-utils";
 
 interface Props {
 	class?: string;
@@ -50,6 +51,9 @@ const hasCover =
 	processedImage !== undefined &&
 	processedImage !== null &&
 	processedImage !== "";
+
+const postId = removeFileExtension(entry.id);
+const postPath = `/posts/${postId}`;
 
 const coverWidth = "30%";
 
@@ -116,6 +120,11 @@ const descriptionText = description || remarkPluginFrontmatter.excerpt || "";
       password={password}
       className="mb-4 post-meta"
     />
+
+    <!-- stats -->
+    <div class="mb-3">
+      <D1Stats path={postPath} />
+    </div>
 
     <!-- description -->
     <div

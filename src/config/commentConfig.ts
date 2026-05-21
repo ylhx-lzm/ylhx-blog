@@ -2,7 +2,7 @@ import type { CommentConfig } from "../types/config";
 
 export const commentConfig: CommentConfig = {
 	// 评论系统类型: none, twikoo, waline, giscus, disqus, artalk, d1，默认为none，即不启用评论系统
-	type: "none",
+	type: "d1",
 
 	//twikoo评论系统配置
 	twikoo: {
@@ -86,7 +86,7 @@ export const commentConfig: CommentConfig = {
 	// Cloudflare D1 原生评论系统配置
 	d1: {
 		// Cloudflare Turnstile site key，用于提交评论防刷
-		turnstileSiteKey: "",
+		turnstileSiteKey: "0x4AAAAAADTzKYZP-cca6wzq",
 		// Worker API 地址，留空表示使用当前站点同源 /api/comments
 		apiBase: "",
 	},

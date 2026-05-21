@@ -31,10 +31,19 @@ const { path, className = "" } = Astro.props;
 		aria-pressed="false"
 		aria-label="点赞"
 	>
-		<span class="meta-icon">
+		<span class="meta-icon like-icon-outline">
 			<Icon name="material-symbols:favorite-outline-rounded" class="text-xl" />
+		</span>
+		<span class="meta-icon like-icon-filled hidden">
+			<Icon name="material-symbols:favorite-rounded" class="text-xl text-(--primary)" />
 		</span>
 		<span class="text-50 text-sm font-medium mr-1">点赞</span>
 		<span class="text-50 text-sm font-medium" data-d1-likes>--</span>
 	</button>
 </div>
+
+<style>
+	button[data-d1-like-button][aria-pressed="true"] .like-icon-outline { display: none; }
+	button[data-d1-like-button][aria-pressed="true"] .like-icon-filled { display: inline-flex !important; }
+	button[data-d1-like-button][aria-pressed="true"] { color: var(--primary); }
+</style>
