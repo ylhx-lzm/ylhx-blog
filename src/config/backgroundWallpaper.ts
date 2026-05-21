@@ -46,7 +46,6 @@ export const backgroundWallpaper: BackgroundWallpaperConfig = {
 			"assets/images/DesktopWallpaper/d3.avif",
 			"assets/images/DesktopWallpaper/d4.avif",
 			"assets/images/DesktopWallpaper/d5.avif",
-			"assets/images/DesktopWallpaper/d6.avif",
 		],
 		// 移动背景图片（支持单张或多张随机）
 		// mobile: "assets/images/MobileWallpaper/m1.avif",
@@ -56,13 +55,12 @@ export const backgroundWallpaper: BackgroundWallpaperConfig = {
 			"assets/images/MobileWallpaper/m3.avif",
 			"assets/images/MobileWallpaper/m4.avif",
 			"assets/images/MobileWallpaper/m5.avif",
-			"assets/images/MobileWallpaper/m6.avif",
 		],
 	},
 	// 横幅壁纸和全屏壁纸共享配置
 	common: {
 		// 横幅文字遮罩暗度，0-1之间，值越大越暗
-		dimOpacity: 0.2,
+		dimOpacity: 0.35,
 		// 主页横幅文字
 		homeText: {
 			// 是否启用主页横幅文字
@@ -70,17 +68,15 @@ export const backgroundWallpaper: BackgroundWallpaperConfig = {
 			// 是否允许用户通过控制面板切换横幅标题显示
 			switchable: true,
 			// 主页横幅主标题
-			title: "Lovely firefly!",
+			title: "✨ ylhx",
 			// 主页横幅主标题字体大小
 			titleSize: "3.8rem",
 			// 主页横幅副标题
 			subtitle: [
-				"In Reddened Chrysalis, I Once Rest",
-				"From Shattered Sky, I Free Fall",
-				"Amidst Silenced Stars, I Deep Sleep",
-				"Upon Lighted Fyrefly, I Soon Gaze",
-				"From Undreamt Night, I Thence Shine",
-				"In Finalized Morrow, I Full Bloom",
+				"Code, Life, Thinking",
+				"Stay curious, keep learning",
+				"写点代码，记录生活",
+				"每一个不曾起舞的日子，都是对生命的辜负",
 			],
 			// 主页横幅副标题字体大小
 			subtitleSize: "1.5rem",

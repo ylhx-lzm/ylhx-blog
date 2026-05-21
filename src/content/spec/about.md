@@ -1,38 +1,89 @@
-# 关于我 / About Me
+👋 关于我 / About Me
 
-你好！我是 **夏叶** ，一个在数字世界中默默无闻的一片叶子。
+你好，我是 **YLHX**。
 
-## 🛠️ 关于本站
+一个喜欢把奇怪想法变成真实工具的人。
 
-这个网站使用 **Astro** 框架构建，采用了 [Firefly](https://github.com/CuteLeaf/Firefly) 模板，Firefly 是基于 [Fuwari](https://github.com/saicaca/fuwari) 的二次开发。
+日常在研究：
 
-**Firefly** 是一款基于 Astro 框架和 Fuwari 模板开发的清新美观且现代化个人博客主题模板，专为技术爱好者和内容创作者设计。该主题融合了现代 Web 技术栈，提供了丰富的功能模块和高度可定制的界面，让您能够轻松打造出专业且美观的个人博客网站。
+ 🤖 让 AI 学会干活
 
+ ⚡ 让浏览器学会自己点按钮
 
-**🖥️在线预览： [Firefly - Demo site](https://firefly.cuteleaf.cn/)**
+ 🧠 让 Agent 少说废话多办事
 
-**🏠我的博客： [https://blog.cuteleaf.cn](https://blog.cuteleaf.cn/)**
+ ☕ 顺便和各种 Bug 斗智斗勇
 
-**📝Firefly使用文档： [https://docs-firefly.cuteleaf.cn](https://docs-firefly.cuteleaf.cn/)**
+这里没有太多高深莫测的黑科技，更多的是：
 
-**⭐Firefly开源地址：[https://github.com/CuteLeaf/Firefly](https://github.com/CuteLeaf/Firefly)** 
+把一个想法折腾成项目，把一个项目折腾成自动化，再把自动化折腾得没人需要手动操作。
 
-**⭐Fuwari开源地址：[https://github.com/saicaca/fuwari](https://github.com/saicaca/fuwari)**
+如果某天你发现：
 
-::github{repo="CuteLeaf/Firefly"}
+"这事居然还能自动干？"
 
-::github{repo="saicaca/fuwari"}
-
-
-## 📫 联系方式
-
-如果你想和我交流技术问题，分享有趣的想法，或者只是想打个招呼，欢迎通过以下方式联系我：
-
-- 💻 **GitHub**: [CuteLeaf](https://github.com/CuteLeaf)
-- ✉️ **Email**: [xiaye@msn.com](mailto:xiaye@msn.com)
-- 🐧 **QQ交流群：[1087127207](https://qm.qq.com/q/ZGsFa8qX2G)**
+大概率就是本站在研究的东西。
 
 ---
 
-*感谢你的来访！希望在这里能找到对你有用的内容！*
+ 🚀 我在折腾什么
 
+当前技能树：
+
+| 技能 | 熟练度 |
+|------|--------|
+| AI Agent | ████████████ 95% |
+| AIGC | ███████████░ 90% |
+| Automation | ████████████ 95% |
+| 睡眠 | ██░░░░░░░░░░ 15% |
+
+近期兴趣：
+
+-  🤖 AI Agent
+-  🎨 AIGC
+-  ⚡ 自动化工作流
+-  🛠 浏览器智能体
+-  📚 RAG 知识库
+-  🧪 各种脑洞实验
+
+---
+
+ 🛠️ 关于本站
+
+这个站存在的原因很简单：
+
+因为脑洞和踩坑越来越多，脑子快存不下了。
+
+所以把它们扔到这里。
+
+这里可能会出现：
+
+ 💡 一个突然冒出来的想法
+
+ 🧪 一个半夜折腾出来的小项目
+
+ 📈 一些 AI 新东西的测试
+
+ 🐛 以及一些看起来很离谱，但真的能跑起来的东西
+
+希望未来某一天：
+
+这里能从「个人博客」慢慢长成「AI 小实验室」。
+
+---
+
+ 📫 找到我
+
+如果你也喜欢：
+
+- AI
+- Agent
+- 自动化
+- 折腾奇怪的东西
+- 或者单纯来聊天
+
+欢迎来串门 👋
+
+💻 **GitHub**：https://github.com/ylhx-lzm
+
+✉️ **Email**：2963730556@qq.com
