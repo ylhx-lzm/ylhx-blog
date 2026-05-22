@@ -1,4 +1,4 @@
-name = "ylhx-blog"
+name = "ylhxblog"
 compatibility_date = "2026-05-21"
 main = "src/worker/index.ts"
 
