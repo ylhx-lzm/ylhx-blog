@@ -1,8 +1,8 @@
 <script lang="ts">
 type TrendRow = {
 	day: string;
-	pv: number;
-	uv: number;
+	views: number;
+	likes: number;
 };
 
 type DashboardRow = {
@@ -80,17 +80,18 @@ $effect(() => {
 let trendBarWidth = 16;
 let trendChartHeight = 150;
 let maxTrend = 1;
-let chartBars: Array<{x: number, pvH: number, uvH: number, label: string}> = [];
+let chartBars: Array<{ x: number; pvH: number; uvH: number; label: string }> =
+	[];
 
 $effect(() => {
 	const rows = dashboard.trendRows;
 	if (rows && rows.length > 0) {
-		maxTrend = Math.max(1, ...rows.map((r) => Math.max(r.pv, r.uv)));
+		maxTrend = Math.max(1, ...rows.map((r) => Math.max(r.views, r.likes)));
 		chartBars = rows.map((row, i) => ({
 			x: i * 48 + 20,
-			pvH: (row.pv / maxTrend) * trendChartHeight,
-			uvH: (row.uv / maxTrend) * trendChartHeight,
-			label: row.day.slice(5)
+			pvH: (row.views / maxTrend) * trendChartHeight,
+			uvH: (row.likes / maxTrend) * trendChartHeight,
+			label: row.day.slice(5),
 		}));
 	} else {
 		chartBars = [];
@@ -160,7 +161,7 @@ $effect(() => {
 	<!-- 趋势图 -->
 	{#if dashboard.trendRows && dashboard.trendRows.length > 0}
 		<div class="mt-6">
-			<h3 class="mb-3 text-sm font-semibold text-neutral-600 dark:text-neutral-300">近 7 天趋势（PV / UV）</h3>
+			<h3 class="mb-3 text-sm font-semibold text-neutral-600 dark:text-neutral-300">近 7 天趋势（浏览量 / 点赞数）</h3>
 			<div class="rounded-lg bg-black/5 p-4 dark:bg-white/10">
 				<svg viewBox="0 -10 350 220" class="w-full max-h-56">
 					{#each chartBars as bar}
@@ -171,8 +172,8 @@ $effect(() => {
 					<line x1="10" y1={trendChartHeight + 10} x2="340" y2={trendChartHeight + 10} stroke="var(--line-divider,#ccc)" stroke-width="1" />
 				</svg>
 				<div class="mt-1 flex gap-4 text-xs text-(--content-meta)">
-					<span><span class="inline-block w-3 h-3 rounded-sm mr-1 align-middle" style="background:var(--primary,#6366f1)"></span>PV</span>
-					<span><span class="inline-block w-3 h-3 rounded-sm mr-1 align-middle" style="background:#22c55e"></span>UV</span>
+					<span><span class="inline-block w-3 h-3 rounded-sm mr-1 align-middle" style="background:var(--primary,#6366f1)"></span>浏览量</span>
+					<span><span class="inline-block w-3 h-3 rounded-sm mr-1 align-middle" style="background:#22c55e"></span>点赞数</span>
 				</div>
 			</div>
 		</div>

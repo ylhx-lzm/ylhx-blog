@@ -617,18 +617,46 @@ async function adminDashboard(env: Env): Promise<Response> {
 		 (SELECT COUNT(*) FROM friend_requests WHERE status = 'pending') AS pendingFriends,
 		 (SELECT COUNT(*) FROM subscriptions WHERE status = 'active') AS subscriptions`,
 	).first();
-	const trendRows = await env.DB.prepare(
-		"SELECT day, SUM(pv) AS pv, SUM(uv) AS uv FROM daily_stats WHERE day >= ? GROUP BY day ORDER BY day ASC LIMIT 7",
+
+	const sixDaysAgoDate = daysAgo(6);
+	const trendViews = await env.DB.prepare(
+		"SELECT day, SUM(pv) AS views FROM daily_stats WHERE day >= ? GROUP BY day ORDER BY day ASC LIMIT 7",
 	)
-		.bind(daysAgo(6))
+		.bind(sixDaysAgoDate)
 		.all();
+	const sixDaysAgoMs = new Date(sixDaysAgoDate).getTime();
+	const trendLikes = await env.DB.prepare(
+		`SELECT DATE(created_at / 1000, 'unixepoch') AS day, COUNT(*) AS likes
+		 FROM post_likes
+		 WHERE created_at >= ?
+		 GROUP BY day
+		 ORDER BY day ASC`,
+	)
+		.bind(sixDaysAgoMs)
+		.all();
+	const likesMap = new Map<string, number>();
+	for (const row of (trendLikes.results || []) as Array<{
+		day: string;
+		likes: number;
+	}>) {
+		likesMap.set(row.day, row.likes);
+	}
+	const trendRows = ((trendViews.results || []) as Array<{
+		day: string;
+		views: number;
+	}>).map((row) => ({
+		day: row.day,
+		views: row.views,
+		likes: likesMap.get(row.day) || 0,
+	}));
+
 	return json({
 		ok: true,
 		data: {
 			...(totals || {}),
 			todayViews: todayRows?.todayViews || 0,
 			...(pending || {}),
-			trendRows: trendRows.results || [],
+			trendRows,
 			topPosts: topPosts.results || [],
 		},
 	});
@@ -779,12 +807,39 @@ async function adminPublishDraft(env: Env, id: string): Promise<Response> {
 			502,
 		);
 	}
+
+	// 发布后验证：从 GitHub 重新拉取文件确认
+	const publishResult = (await response.json()) as {
+		content?: { sha?: string; html_url?: string };
+		commit?: { sha?: string };
+	};
+	let verified = false;
+	let verifySha = "";
+	let verifyUrl = "";
+	let commitSha = "";
+	if (publishResult.content?.sha) {
+		verified = true;
+		verifySha = publishResult.content.sha;
+		verifyUrl = publishResult.content.html_url || "";
+	}
+	if (publishResult.commit?.sha) {
+		commitSha = publishResult.commit.sha;
+	}
+
 	await env.DB.prepare(
 		"UPDATE drafts SET status = 'published', published_at = ?, updated_at = ? WHERE id = ?",
 	)
 		.bind(now(), now(), id)
 		.run();
-	return json({ ok: true, path: filePath });
+	return json({
+		ok: true,
+		path: filePath,
+		verified,
+		sha: verifySha.substring(0, 7),
+		commit: commitSha.substring(0, 7),
+		url: verifyUrl,
+		branch,
+	});
 }
 
 function githubHeaders(env: Env): HeadersInit {
